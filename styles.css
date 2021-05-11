@@ -1,0 +1,45 @@
+body{
+    background: darkslategrey;
+}
+
+.FlexBox{
+    height: 95vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#DataBox{
+    background: black;
+    border: solid 2px blueviolet;
+    width : 70%;
+    height : 50%;
+    display:flex;
+    justify-content: space-evenly;
+    padding: 2px;
+    color : white;
+}
+
+.sizeSpeed{
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    transform : translateX(-50%);
+}
+
+.sortButtons{
+    position: absolute;
+    left: 50%;
+    transform : translateX(-50%);
+    bottom: 10%;
+}
+
+.dataBar{
+    display: flex;
+    flex-direction:column;
+}
+
+.insideDataBox{
+    background:royalblue;
+}
