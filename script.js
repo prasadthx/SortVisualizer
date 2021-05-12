@@ -100,11 +100,48 @@ async function QuickSort(array){
 
 }
 
-const merge = () => {
+let DummyArray;
 
+const merge = (array, low, mid, high) => {
+    DummyArray = [];
+    let i = low, j = mid + 1, k = 0;
+    while(i <= mid && j <= high){
+        if(array[j][0] > array[i][0]){
+            //console.log(k+" : "+array[i][0])
+            DummyArray[k] = array[i];
+            i++;
+        }
+        else{
+            //console.log(k+" : "+array[j][0])
+            DummyArray[k] = array[j];
+            j++;
+        }
+        k++;
+    }
+    while(i <= mid){
+        //console.log(k+" : "+array[i][0])
+        DummyArray[k++] = array[i++];
+        //k++; i++;
+    }
+    while(j <= high){
+        //console.log(k+" : "+array[j][0])
+        DummyArray[k++] = array[j++];
+        //k++; j++;
+    }
+    for(i = low, j = 0; i <= high; i++, j++) {
+        array[i] = DummyArray[j];
+    }
+    console.log(array);
 }
 
-async function MergeSort(array) {
-    let arrayLength = array.length;
-
+async function MergeSort(array, low, high) {
+    let mid;
+    if(low < high){
+        mid = Math.floor((low + high) / 2);
+        await MergeSort(array, low, mid);
+        await MergeSort(array, mid + 1, high);
+        merge(array, low, mid, high)
+        await sleep(200);
+        displaySortedBar();
+    }
 }
