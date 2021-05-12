@@ -75,3 +75,36 @@ async function InsertionSort(array) {
         displaySortedBar();
     }
 }
+
+async function SelectionSort(array){
+    let arrayLength = array.length;
+    let compareElement, minValue, minPosition;
+    for (let i = 0; i < arrayLength; i++){
+        compareElement = array[i];
+        minValue = compareElement[0];
+        minPosition = i;
+        for(let j = i + 1; j < arrayLength; j++){
+            if(array[j][0] < minValue){
+                minPosition = j;
+                minValue = array[j][0];
+            }
+        }
+        array[i] = array[minPosition];
+        array[minPosition] = compareElement;
+        await sleep(50);
+        displaySortedBar();
+    }
+}
+
+async function QuickSort(array){
+
+}
+
+const merge = () => {
+
+}
+
+async function MergeSort(array) {
+    let arrayLength = array.length;
+
+}
