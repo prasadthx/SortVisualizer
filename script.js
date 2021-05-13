@@ -190,3 +190,22 @@ async function MergeSort(array, low, high) {
         displaySortedBar();
     }
 }
+
+async function ShellSort(array){
+    let arrayLength = array.length,
+        temp;
+    for(let gap = Math.floor(arrayLength / 2); gap >= 1; gap = Math.floor(gap/2)){
+        for(let i = gap; i < arrayLength ; i++ ){
+            temp = array[i];
+            let j;
+            for(j = i; j - gap >= 0 && array[j - gap][0] > temp[0]; j = j - gap  ) {
+                array[j] = array[ j - gap];
+            }
+            array[j] = temp;
+            await sleep(100);
+            displaySortedBar();
+        }
+    }
+
+
+}
