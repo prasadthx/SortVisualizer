@@ -96,8 +96,60 @@ async function SelectionSort(array){
     }
 }
 
-async function QuickSort(array){
+async function QuickSort(array, low, high){
+    let pivotElement = array[low - 1],
+        upperLimit = high,
+        lowerLimit = low,
+        temp;
 
+    if( (high - low) === 0 ){
+        console.log("High " + high );
+        console.log("Low " + low);
+        if(array[low][0] < pivotElement[0]){
+            array[low - 1] = array[low];
+            array[low] = pivotElement;
+        }
+        return;
+    }
+
+    while(low <= high){
+        while( array[low][0] < pivotElement[0] ){
+            low++;
+            if( !(low < high)){
+                break;
+            }
+        }
+        while(array[high][0] > pivotElement[0] ){
+            high--;
+            if( !(low < high)){
+                break;
+            }
+        }
+        if( !(low <= high)){
+            break;
+        }
+        //await sleep(300);
+        temp = array[low];
+        array[low] = array[high];
+        array[high] = temp;
+    }
+    //await sleep(300);
+    temp = array[high];
+    array[high] = pivotElement;
+    array[lowerLimit - 1] = temp;
+
+    //await sleep(300);
+
+
+    if(lowerLimit !== high && high - lowerLimit >= 1){
+        await QuickSort(array, lowerLimit, high - 1);
+    }
+
+    if(upperLimit !== high && upperLimit - high > 1){
+        await QuickSort(array, high + 2, upperLimit);
+    }
+    await sleep(300);
+    displaySortedBar();
 }
 
 let DummyArray;
@@ -107,31 +159,24 @@ const merge = (array, low, mid, high) => {
     let i = low, j = mid + 1, k = 0;
     while(i <= mid && j <= high){
         if(array[j][0] > array[i][0]){
-            //console.log(k+" : "+array[i][0])
             DummyArray[k] = array[i];
             i++;
         }
         else{
-            //console.log(k+" : "+array[j][0])
             DummyArray[k] = array[j];
             j++;
         }
         k++;
     }
     while(i <= mid){
-        //console.log(k+" : "+array[i][0])
         DummyArray[k++] = array[i++];
-        //k++; i++;
     }
     while(j <= high){
-        //console.log(k+" : "+array[j][0])
         DummyArray[k++] = array[j++];
-        //k++; j++;
     }
     for(i = low, j = 0; i <= high; i++, j++) {
         array[i] = DummyArray[j];
     }
-    console.log(array);
 }
 
 async function MergeSort(array, low, high) {
