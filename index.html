@@ -7,8 +7,11 @@
 </head>
 <body>
 
+<div id="mainBox">
+    <H1> Sort Simulator </H1>
     <div class="sizeSpeed">
         <input type="range" min=10 max=50 value=25 class="slider" id="myRange">
+        <input type="range" min=10 max=500 value=25 class="slider" id="sortSpeed">
     </div>
 
     <div class="FlexBox">
@@ -18,13 +21,32 @@
     </div>
 
     <div class="sortButtons">
-        <button onclick="BubbleSort(barArray)">Bubble Sort</button>
-        <button onclick="InsertionSort(barArray)">Insertion Sort</button>
-        <button onclick="SelectionSort(barArray)">Selection Sort</button>
-        <button onclick="MergeSort(barArray, 0, barArray.length - 1)">Merge Sort</button>
-        <button onclick="QuickSort(barArray, 1, barArray.length - 1)">Quick Sort</button>
-        <button onclick="ShellSort(barArray)">Shell Sort</button>
+        <div style="width: 60%; display: flex; flex-wrap: wrap; align-items: center; justify-content:space-evenly;">
+
+            <div>
+                <button onclick="BubbleSort(barArray)">Bubble Sort</button>
+            </div>
+            <div>
+                <button onclick="InsertionSort(barArray)">Insertion Sort</button>
+            </div>
+            <div>
+                <button onclick="SelectionSort(barArray)">Selection Sort</button>
+            </div>
+            <div>
+                <button onclick="MergeSort(barArray, 0, barArray.length - 1)">Merge Sort</button>
+            </div>
+            <div>
+                <button onclick="QuickSort(barArray, 1, barArray.length - 1)">Quick Sort</button>
+            </div>
+            <div>
+                <button onclick="ShellSort(barArray)">Shell Sort</button>
+            </div>
+
+<!--        <button onclick="CountingSort(barArray)">Counting Sort</button>-->
+        </div>
     </div>
+
+</div>
 
 <script src="./script.js"></script>
 </body>

@@ -2,9 +2,17 @@ body{
     background: darkslategrey;
 }
 
-.FlexBox{
-    height: 95vh;
+#mainBox{
+    display: flex;
     width: 100%;
+    height: 95vh;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.FlexBox{
+    width: 100%;
+    height: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -13,8 +21,10 @@ body{
 #DataBox{
     background: black;
     border: solid 2px blueviolet;
-    width : 70%;
-    height : 50%;
+    width : 100%;
+    height : 100%;
+    margin-left: 2vh;
+    margin-right: 2vh;
     display:flex;
     justify-content: space-evenly;
     padding: 2px;
@@ -22,17 +32,55 @@ body{
 }
 
 .sizeSpeed{
-    position: absolute;
-    left: 50%;
-    top: 10%;
-    transform : translateX(-50%);
+
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 23px;
+    height: 24px;
+    border: 0;
+    background: url('./assets/speed.png');
+    background-size: cover;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 23px;
+    height: 24px;
+    border: 0;
+    background: url('./assets/speed.png');
+    cursor: pointer;
+}
+
+#myRange::-webkit-slider-thumb{
+    background: yellow url('./assets/size.png');
+    background-size: cover;
+    border-radius: 50%;
 }
 
 .sortButtons{
-    position: absolute;
-    left: 50%;
-    transform : translateX(-50%);
-    bottom: 10%;
+    display: flex;
+    justify-content:center;
+    align-items: center;
+}
+
+.sortButtons > button{
+    alignment: center;
 }
 
 .dataBar{
@@ -42,4 +90,13 @@ body{
 
 .insideDataBox{
     background:royalblue;
+}
+
+button{
+    height: 5vh;
+    width: 15vw;
+    /*font-size: 1rem;*/
+    font-weight:bold;
+    border-radius:50%;
+    margin-top: 2vh;
 }

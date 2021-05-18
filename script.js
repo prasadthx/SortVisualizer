@@ -103,8 +103,6 @@ async function QuickSort(array, low, high){
         temp;
 
     if( (high - low) === 0 ){
-        console.log("High " + high );
-        console.log("Low " + low);
         if(array[low][0] < pivotElement[0]){
             array[low - 1] = array[low];
             array[low] = pivotElement;
@@ -206,6 +204,38 @@ async function ShellSort(array){
             displaySortedBar();
         }
     }
+}
 
+async function CountingSort(array) {
+    console.log(array);
+    let arrayLength = array.length;
+    let max = array[0];
+    let sortedArray = [],
+        countingArray = [];
+    for(let i = 1; i < arrayLength; i++){
+        if(array[i][0] > max[0]){
+            max = array[i];
+        }
+    }
 
+    for(let i = 0; i <= max[0] ; i++){
+        countingArray[i] = 0;
+    }
+    for(let i = 0; i < arrayLength ; i++){
+        countingArray[array[i][0]] += 1
+    }
+    for(let i = 1; i <= max[0] ; i++){
+        countingArray[i] += countingArray[i - 1];
+    }
+    console.log(countingArray);
+
+    for(let i = arrayLength - 1; i >= 0 ; i--){
+        sortedArray[countingArray[array[i][0]] - 1] = array[i];
+        countingArray[array[i]]--;
+    }
+    for(let i = 0; i < arrayLength; i++) {
+        array[i] = sortedArray[i];
+    }
+    await sleep(100)
+    displaySortedBar();
 }
