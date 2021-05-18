@@ -1,11 +1,18 @@
 body{
-    background: darkslategrey;
+    height: 100%;
+    background-image: linear-gradient(to bottom right, darkblue, darkred);
+    background-size: cover;
+}
+
+h1, h3{
+    color: white;
+    text-align: center;
 }
 
 #mainBox{
     display: flex;
     width: 100%;
-    height: 95vh;
+    height: 97vh;
     flex-direction: column;
     justify-content: space-between;
 }
@@ -29,10 +36,25 @@ body{
     justify-content: space-evenly;
     padding: 2px;
     color : white;
+
+    background: rgba( 0, 0, 0, 0.50 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 20.0px );
+    -webkit-backdrop-filter: blur( 20.0px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
 }
 
 .sizeSpeed{
+    margin-left:2vh;
+    margin-right: 2vh;
+}
 
+.sizeSpeed > div{
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    align-items: center;
 }
 
 .slider {

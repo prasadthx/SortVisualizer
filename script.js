@@ -40,7 +40,7 @@ function displaySortedBar(){
 }
 
 async function BubbleSort(array) {
-    console.log(array[0][0]);
+    changeButtonStatus(1);
     let arrayLength = array.length;
     let temp;
     for(let i=0; i < arrayLength; i++) {
@@ -55,9 +55,11 @@ async function BubbleSort(array) {
             }
         }
     }
+    changeButtonStatus(0);
 }
 
 async function InsertionSort(array) {
+    changeButtonStatus(1);
     let arrayLength = array.length;
     let compareElement, temp, j;
     for(let i=1; i < arrayLength; i++) {
@@ -74,9 +76,11 @@ async function InsertionSort(array) {
         await sleep(50);
         displaySortedBar();
     }
+    changeButtonStatus(0);
 }
 
 async function SelectionSort(array){
+    changeButtonStatus(1);
     let arrayLength = array.length;
     let compareElement, minValue, minPosition;
     for (let i = 0; i < arrayLength; i++){
@@ -94,9 +98,13 @@ async function SelectionSort(array){
         await sleep(50);
         displaySortedBar();
     }
+    changeButtonStatus(0);
 }
 
 async function QuickSort(array, low, high){
+    if(low === 1 && high === array.length - 1){
+        changeButtonStatus(1);
+    }
     let pivotElement = array[low - 1],
         upperLimit = high,
         lowerLimit = low,
@@ -148,6 +156,10 @@ async function QuickSort(array, low, high){
     }
     await sleep(300);
     displaySortedBar();
+    if(upperLimit === array.length - 1 && lowerLimit === 1){
+        changeButtonStatus(0);
+    }
+
 }
 
 let DummyArray;
@@ -178,6 +190,9 @@ const merge = (array, low, mid, high) => {
 }
 
 async function MergeSort(array, low, high) {
+    if(low === 0 && high === array.length - 1){
+        changeButtonStatus(1);
+    }
     let mid;
     if(low < high){
         mid = Math.floor((low + high) / 2);
@@ -187,9 +202,13 @@ async function MergeSort(array, low, high) {
         await sleep(200);
         displaySortedBar();
     }
+    if(low === 0 && high === array.length - 1){
+        changeButtonStatus(0);
+    }
 }
 
 async function ShellSort(array){
+    changeButtonStatus(1);
     let arrayLength = array.length,
         temp;
     for(let gap = Math.floor(arrayLength / 2); gap >= 1; gap = Math.floor(gap/2)){
@@ -204,6 +223,7 @@ async function ShellSort(array){
             displaySortedBar();
         }
     }
+    changeButtonStatus(0);
 }
 
 async function CountingSort(array) {
@@ -238,4 +258,21 @@ async function CountingSort(array) {
     }
     await sleep(100)
     displaySortedBar();
+}
+
+let buttons = document.getElementsByTagName('button');
+
+const changeButtonStatus = (status) => {
+    console.log(buttons)
+    if(status === 1){
+        for (let button of buttons){
+            button.disabled = true;
+        }
+    }
+    else{
+        for(let button of buttons){
+            button.disabled = false;
+        }
+    }
+
 }
