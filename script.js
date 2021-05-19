@@ -1,43 +1,64 @@
-const slider= document.getElementById("myRange");
+const rangeSlider= document.getElementById("myRange");
 
 const dataBox = document.getElementById('DataBox');
 
-// function createFlexArray(count) {
-//     for(let i=0; i < count; i++) {
-//         dataBox.innerHTML += <div>Scam</div>
-//     }
-// }
+const speedSlider = document.getElementById('sortSpeed');
+
 let barArray = [];
 
-slider.oninput = () => {
-    let index = slider.value;
-    let randomInt;
+const setArray = () => {
+    let index = rangeSlider.value;
     barArray = [];
     for(let i=0; i < index; i++) {
-        barArray[i] = [i, `<div class='dataBar'> <div  style='flex: ${1- (i+1)/index}'></div> <div class='insideDataBox' style='flex: ${(i+1)/index}'> ${(i+1)} </div> </div>`]
+        barArray[i] = [i, `<div class='dataBar' style='width: ${100/index + 1}%; border: black 0.2px solid; font-size: ${10/index}rem;'> <div  style='flex: ${1- (i+1)/index}'></div> <div class='insideDataBox' style='flex: ${(i+1)/index}'>${1+i}</div> </div>`]
     }
     barArray = shuffleArray(barArray);
     dataBox.innerHTML = "";
     for(let i=0; i < index; i++) {
         dataBox.innerHTML += barArray[i][1];
     }
+}
+
+const shuffleArray = (array) => {
+    return array.sort( ()=>Math.random()-0.5 );
+}
+
+let speed;
+
+const setSpeed = () => {
+    speed = speedSlider.value;
+}
+
+window.onload = () => {
+    setArray();
+    setSpeed();
+}
+
+rangeSlider.oninput = () => {
+    setArray();
+    changeButtonStatus(0);
 };
 
-
-function shuffleArray(array) {
-    return array.sort( ()=>Math.random()-0.5 );
+speedSlider.oninput = () => {
+    setSpeed();
 }
 
 const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
-function displaySortedBar(){
+const displaySortedBar = () => {
     dataBox.innerHTML = "";
-    for(let i=0; i < slider.value; i++) {
+    for(let i=0; i < rangeSlider.value; i++) {
         dataBox.innerHTML += barArray[i][1];
     }
 }
+
+async function setColor(element, color){
+    let setElement = barArray[element];
+    setElement[1] = `<div class='dataBar' style='width: ${100/rangeSlider.value+ 1}%; border: black 0.2px solid; font-size: ${10/rangeSlider.value}rem;'> <div  style='flex: ${1- (element+1)/rangeSlider.value}'></div> <div class='insideDataBox' style='flex: ${(element+1)/rangeSlider.value}; background: ${color}'>${1+element}</div> </div>`;
+}
+
 
 async function BubbleSort(array) {
     changeButtonStatus(1);
@@ -50,10 +71,13 @@ async function BubbleSort(array) {
                 array[j - 1] = array[j];
                 array[j] = temp;
 
-                await sleep(50);
+                await sleep(speed/10);
                 displaySortedBar();
             }
         }
+        await sleep(speed/10);
+        await setColor(arrayLength - i - 1, "green");
+        displaySortedBar();
     }
     changeButtonStatus(0);
 }
@@ -63,17 +87,17 @@ async function InsertionSort(array) {
     let arrayLength = array.length;
     let compareElement, temp, j;
     for(let i=1; i < arrayLength; i++) {
-        compareElement = array[i]
+        compareElement = array[i];
         for(j=i; j > 0; j--){
             if(array[j - 1][0] < compareElement[0]){
                 break;
             }
             array[j] = array[j - 1];
-            await sleep(50);
+            await sleep(speed);
             displaySortedBar();
         }
         array[j] = compareElement
-        await sleep(50);
+        await sleep(speed);
         displaySortedBar();
     }
     changeButtonStatus(0);
@@ -91,11 +115,15 @@ async function SelectionSort(array){
             if(array[j][0] < minValue){
                 minPosition = j;
                 minValue = array[j][0];
+                displaySortedBar();
+                await sleep(speed);
             }
         }
         array[i] = array[minPosition];
         array[minPosition] = compareElement;
-        await sleep(50);
+        await setColor(i, "green");
+        // await setColor(minPosition, "yellow");
+        await sleep(speed);
         displaySortedBar();
     }
     changeButtonStatus(0);
@@ -109,6 +137,9 @@ async function QuickSort(array, low, high){
         upperLimit = high,
         lowerLimit = low,
         temp;
+
+    displaySortedBar();
+    await sleep(speed);
 
     if( (high - low) === 0 ){
         if(array[low][0] < pivotElement[0]){
@@ -134,17 +165,21 @@ async function QuickSort(array, low, high){
         if( !(low <= high)){
             break;
         }
-        //await sleep(300);
+
         temp = array[low];
         array[low] = array[high];
         array[high] = temp;
+
+        await sleep(speed);
+        displaySortedBar();
     }
-    //await sleep(300);
+
     temp = array[high];
     array[high] = pivotElement;
     array[lowerLimit - 1] = temp;
 
-    //await sleep(300);
+    await sleep(speed);
+    displaySortedBar();
 
 
     if(lowerLimit !== high && high - lowerLimit >= 1){
@@ -154,7 +189,7 @@ async function QuickSort(array, low, high){
     if(upperLimit !== high && upperLimit - high > 1){
         await QuickSort(array, high + 2, upperLimit);
     }
-    await sleep(300);
+    await sleep(speed);
     displaySortedBar();
     if(upperLimit === array.length - 1 && lowerLimit === 1){
         changeButtonStatus(0);
@@ -164,7 +199,7 @@ async function QuickSort(array, low, high){
 
 let DummyArray;
 
-const merge = (array, low, mid, high) => {
+const merge = async (array, low, mid, high) => {
     DummyArray = [];
     let i = low, j = mid + 1, k = 0;
     while(i <= mid && j <= high){
@@ -186,6 +221,8 @@ const merge = (array, low, mid, high) => {
     }
     for(i = low, j = 0; i <= high; i++, j++) {
         array[i] = DummyArray[j];
+        await sleep(speed);
+        displaySortedBar();
     }
 }
 
@@ -198,8 +235,8 @@ async function MergeSort(array, low, high) {
         mid = Math.floor((low + high) / 2);
         await MergeSort(array, low, mid);
         await MergeSort(array, mid + 1, high);
-        merge(array, low, mid, high)
-        await sleep(200);
+        await merge(array, low, mid, high)
+        await sleep(speed);
         displaySortedBar();
     }
     if(low === 0 && high === array.length - 1){
@@ -219,7 +256,7 @@ async function ShellSort(array){
                 array[j] = array[ j - gap];
             }
             array[j] = temp;
-            await sleep(100);
+            await sleep(speed);
             displaySortedBar();
         }
     }
@@ -263,15 +300,16 @@ async function CountingSort(array) {
 let buttons = document.getElementsByTagName('button');
 
 const changeButtonStatus = (status) => {
-    console.log(buttons)
     if(status === 1){
         for (let button of buttons){
             button.disabled = true;
+            speedSlider.disabled = true;
         }
     }
     else{
         for(let button of buttons){
             button.disabled = false;
+            speedSlider.disabled = false;
         }
     }
 
