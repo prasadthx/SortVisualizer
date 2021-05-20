@@ -11,3 +11,7 @@
 
 The project is hosted on :-
 <a href="https://sort-simulator-6118d.web.app/">https://sort-simulator-6118d.web.app/</a>
+
+<img src="IMG_20210521_000927.jpg"/>
+
+<img src="IMG_20210521_000913.jpg"/>
