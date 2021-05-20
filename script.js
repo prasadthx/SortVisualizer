@@ -73,9 +73,8 @@ const sleep = async (milliseconds) => {
     if(halt){
         let currentTime = 0;
         tempHalt = true;
-        while (currentTime !== 10000){
-            await sleep(1000);
-            console.log("current time is: " + currentTime);
+        while (currentTime !== 1000000){
+            await sleep(100);
             if(halt===false){
                 break;
             }
@@ -100,12 +99,12 @@ const haltSort = async () => {
 }
 
 const resetSort = async () => {
-    console.log("Reset pressed");
     terminateSort = true;
     speed = 0;
     setArray();
     await sleep(100);
     setSpeed();
+    terminateSort = false;
 }
 
 async function BubbleSort(array) {
