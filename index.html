@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Sort Simulator</title>
+    <title>Sort Visualizer</title>
     <link rel="stylesheet" href="./styles.css"/>
 </head>
 <body>
 
 <div id="mainBox">
-    <H1> Sort Simulator </H1>
+    <H1> Sort Visualizer </H1>
     <div class="sizeSpeed">
         <div>
             <div style="flex:0.2; text-align:center">
@@ -35,26 +35,35 @@
         </div>
     </div>
 
+    <div class="controlButtons">
+        <div>
+            <button id="haltButton" onclick="haltSort();">Halt</button>
+        </div>
+        <div>
+            <button id="resetButton" onclick="resetSort()">Reset</button>
+        </div>
+    </div>
+
     <div class="sortButtons">
         <div style="width: 60%; display: flex; flex-wrap: wrap; align-items: center; justify-content:space-evenly;">
 
             <div>
-                <button onclick="BubbleSort(barArray)">Bubble Sort</button>
+                <button class="sortButton" onclick="BubbleSort(barArray)">Bubble Sort</button>
             </div>
             <div>
-                <button onclick="InsertionSort(barArray)">Insertion Sort</button>
+                <button class="sortButton" onclick="InsertionSort(barArray)">Insertion Sort</button>
             </div>
             <div>
-                <button onclick="SelectionSort(barArray)">Selection Sort</button>
+                <button class="sortButton" onclick="SelectionSort(barArray)">Selection Sort</button>
             </div>
             <div>
-                <button onclick="MergeSort(barArray, 0, barArray.length - 1)">Merge Sort</button>
+                <button class="sortButton" onclick="MergeSort(barArray, 0, barArray.length - 1)">Merge Sort</button>
             </div>
             <div>
-                <button onclick="QuickSort(barArray, 1, barArray.length - 1)">Quick Sort</button>
+                <button class="sortButton" onclick="QuickSort(barArray, 1, barArray.length - 1)">Quick Sort</button>
             </div>
             <div>
-                <button onclick="ShellSort(barArray)">Shell Sort</button>
+                <button class="sortButton" onclick="ShellSort(barArray)">Shell Sort</button>
             </div>
 
 <!--        <button onclick="CountingSort(barArray)">Counting Sort</button>-->
@@ -63,7 +72,6 @@
 
 </div>
 
-<small id="footer">- Created by Prasad Zore </small>
 
 <script src="./script.js"></script>
 </body>

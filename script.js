@@ -6,6 +6,8 @@ const speedSlider = document.getElementById('sortSpeed');
 
 let barArray = [];
 
+let terminateSort = false;
+
 const setArray = () => {
     let index = rangeSlider.value;
     barArray = [];
@@ -29,22 +31,18 @@ const setSpeed = () => {
     speed = speedSlider.value;
 }
 
-window.onload = () => {
-    setArray();
+window.onload = async () => {
+    await setArray();
     setSpeed();
 }
 
-rangeSlider.oninput = () => {
-    setArray();
+rangeSlider.oninput = async () => {
+    await setArray();
     changeButtonStatus(0);
 };
 
 speedSlider.oninput = () => {
     setSpeed();
-}
-
-const sleep = (milliseconds) => {
-    return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
 const displaySortedBar = () => {
@@ -54,83 +52,177 @@ const displaySortedBar = () => {
     }
 }
 
-async function setColor(element, color){
+const setColor = async (element, color) => {
     let setElement = barArray[element];
     setElement[1] = `<div class='dataBar' style='width: ${100/rangeSlider.value+ 1}%; border: black 0.2px solid; font-size: ${10/rangeSlider.value}rem;'> <div  style='flex: ${1- (element+1)/rangeSlider.value}'></div> <div class='insideDataBox' style='flex: ${(element+1)/rangeSlider.value}; background: ${color}'>${1+element}</div> </div>`;
 }
 
+let halt = false;
+
+let haltButton = document.getElementById('haltButton');
+let resetButton = document.getElementById('resetButton');
+
+haltButton.disabled = true;
+
+let tempHalt = false;
+
+const sleep = async (milliseconds) => {
+    if(tempHalt){
+        return new Promise(resolve => setTimeout(resolve, milliseconds));
+    }
+    if(halt){
+        let currentTime = 0;
+        tempHalt = true;
+        while (currentTime !== 10000){
+            await sleep(1000);
+            console.log("current time is: " + currentTime);
+            if(halt===false){
+                break;
+            }
+            currentTime ++;
+        }
+        return new Promise(resolve => setTimeout(resolve, speed));
+    }
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
+
+const haltSort = async () => {
+    if(halt === true){
+        halt = false;
+        tempHalt = false;
+        haltButton.innerText = "Halt";
+    }
+    else{
+        halt = true;
+        haltButton.innerText = "Resume";
+    }
+}
+
+const resetSort = async () => {
+    console.log("Reset pressed");
+    terminateSort = true;
+    speed = 0;
+    setArray();
+    await sleep(100);
+    setSpeed();
+}
 
 async function BubbleSort(array) {
     changeButtonStatus(1);
-    let arrayLength = array.length;
-    let temp;
-    for(let i=0; i < arrayLength; i++) {
-        for(let j=1; j < (arrayLength - i); j++) {
-            if(array[j - 1][0] > array[j][0]){
-                temp = array[j - 1];
-                array[j - 1] = array[j];
-                array[j] = temp;
+    try{
+        let arrayLength = array.length;
+        let temp;
+        for(let i=0; i < arrayLength; i++) {
+            for (let j = 1; j < (arrayLength - i); j++) {
+                if (array[j - 1][0] > array[j][0]) {
+                    temp = array[j - 1];
+                    array[j - 1] = array[j];
+                    array[j] = temp;
 
-                await sleep(speed/10);
-                displaySortedBar();
+                    if(terminateSort){
+                        changeButtonStatus(0);
+                        return;
+                    }
+                    await sleep(speed / 10);
+                    displaySortedBar();
+                }
             }
+            if(terminateSort){
+                return;
+            }
+            await sleep(speed / 10);
+            await setColor(arrayLength - i - 1, "green");
+            displaySortedBar();
         }
-        await sleep(speed/10);
-        await setColor(arrayLength - i - 1, "green");
-        displaySortedBar();
+    }
+    catch (error){
+        console.log("Bubble Sort terminated");
+        changeButtonStatus(0);
+        return;
     }
     changeButtonStatus(0);
 }
 
+
 async function InsertionSort(array) {
     changeButtonStatus(1);
-    let arrayLength = array.length;
-    let compareElement, temp, j;
-    for(let i=1; i < arrayLength; i++) {
-        compareElement = array[i];
-        for(j=i; j > 0; j--){
-            if(array[j - 1][0] < compareElement[0]){
-                break;
+    try {
+        let arrayLength = array.length;
+        let compareElement, j;
+        for (let i = 1; i < arrayLength; i++) {
+            compareElement = array[i];
+            for (j = i; j > 0; j--) {
+                if (array[j - 1][0] < compareElement[0]) {
+                    break;
+                }
+                array[j] = array[j - 1];
+                if(terminateSort){
+                    return;
+                }
+                await sleep(speed);
+                displaySortedBar();
             }
-            array[j] = array[j - 1];
+            array[j] = compareElement
+            if(terminateSort){
+                changeButtonStatus(0);
+                return;
+            }
             await sleep(speed);
             displaySortedBar();
         }
-        array[j] = compareElement
-        await sleep(speed);
-        displaySortedBar();
+    }
+    catch (error){
+        console.log("Insertion Sort terminated");
+        changeButtonStatus(0);
+        return;
     }
     changeButtonStatus(0);
 }
 
 async function SelectionSort(array){
     changeButtonStatus(1);
-    let arrayLength = array.length;
-    let compareElement, minValue, minPosition;
-    for (let i = 0; i < arrayLength; i++){
-        compareElement = array[i];
-        minValue = compareElement[0];
-        minPosition = i;
-        for(let j = i + 1; j < arrayLength; j++){
-            if(array[j][0] < minValue){
-                minPosition = j;
-                minValue = array[j][0];
-                displaySortedBar();
-                await sleep(speed);
+    try {
+        let arrayLength = array.length;
+        let compareElement, minValue, minPosition;
+        for (let i = 0; i < arrayLength; i++) {
+            compareElement = array[i];
+            minValue = compareElement[0];
+            minPosition = i;
+            for (let j = i + 1; j < arrayLength; j++) {
+                if (array[j][0] < minValue) {
+                    minPosition = j;
+                    minValue = array[j][0];
+                    displaySortedBar();
+                    if(terminateSort){
+                        changeButtonStatus(0);
+                        return;
+                    }
+                    await sleep(speed);
+                }
             }
+            array[i] = array[minPosition];
+            array[minPosition] = compareElement;
+            await setColor(i, "green");
+            // await setColor(minPosition, "yellow");
+            if(terminateSort){
+                changeButtonStatus(0);
+                return;
+            }
+            await sleep(speed);
+            displaySortedBar();
         }
-        array[i] = array[minPosition];
-        array[minPosition] = compareElement;
-        await setColor(i, "green");
-        // await setColor(minPosition, "yellow");
-        await sleep(speed);
-        displaySortedBar();
+    }
+    catch (error) {
+        console.log("Selection Sort terminated");
+        changeButtonStatus(0);
+        return;
     }
     changeButtonStatus(0);
 }
 
 async function QuickSort(array, low, high){
-    if(low === 1 && high === array.length - 1){
+    if (low === 1 && high === array.length - 1) {
         changeButtonStatus(1);
     }
     let pivotElement = array[low - 1],
@@ -139,58 +231,81 @@ async function QuickSort(array, low, high){
         temp;
 
     displaySortedBar();
-    await sleep(speed);
-
-    if( (high - low) === 0 ){
-        if(array[low][0] < pivotElement[0]){
-            array[low - 1] = array[low];
-            array[low] = pivotElement;
-        }
+    if(terminateSort){
+        changeButtonStatus(0);
         return;
     }
+    await sleep(speed);
 
-    while(low <= high){
-        while( array[low][0] < pivotElement[0] ){
-            low++;
-            if( !(low < high)){
+    try {
+        if ((high - low) === 0) {
+            if (array[low][0] < pivotElement[0]) {
+                array[low - 1] = array[low];
+                array[low] = pivotElement;
+            }
+            return;
+        }
+
+        while (low <= high) {
+            while (array[low][0] < pivotElement[0]) {
+                low++;
+                if (!(low < high)) {
+                    break;
+                }
+            }
+            while (array[high][0] > pivotElement[0]) {
+                high--;
+                if (!(low < high)) {
+                    break;
+                }
+            }
+            if (!(low <= high)) {
                 break;
             }
-        }
-        while(array[high][0] > pivotElement[0] ){
-            high--;
-            if( !(low < high)){
-                break;
+
+            temp = array[low];
+            array[low] = array[high];
+            array[high] = temp;
+
+            if(terminateSort){
+                return;
             }
-        }
-        if( !(low <= high)){
-            break;
+            await sleep(speed);
+            displaySortedBar();
         }
 
-        temp = array[low];
-        array[low] = array[high];
-        array[high] = temp;
+        temp = array[high];
+        array[high] = pivotElement;
+        array[lowerLimit - 1] = temp;
 
+        if(terminateSort){
+            changeButtonStatus(0);
+            return;
+        }
+        await sleep(speed);
+        displaySortedBar();
+
+
+        if (lowerLimit !== high && high - lowerLimit >= 1) {
+            await QuickSort(array, lowerLimit, high - 1);
+        }
+
+        if (upperLimit !== high && upperLimit - high > 1) {
+            await QuickSort(array, high + 2, upperLimit);
+        }
+
+        if(terminateSort){
+            changeButtonStatus(0);
+            return;
+        }
         await sleep(speed);
         displaySortedBar();
     }
-
-    temp = array[high];
-    array[high] = pivotElement;
-    array[lowerLimit - 1] = temp;
-
-    await sleep(speed);
-    displaySortedBar();
-
-
-    if(lowerLimit !== high && high - lowerLimit >= 1){
-        await QuickSort(array, lowerLimit, high - 1);
+    catch (error) {
+        console.log("Quick Sort terminated");
+        changeButtonStatus(0);
+        return;
     }
-
-    if(upperLimit !== high && upperLimit - high > 1){
-        await QuickSort(array, high + 2, upperLimit);
-    }
-    await sleep(speed);
-    displaySortedBar();
     if(upperLimit === array.length - 1 && lowerLimit === 1){
         changeButtonStatus(0);
     }
@@ -221,6 +336,11 @@ const merge = async (array, low, mid, high) => {
     }
     for(i = low, j = 0; i <= high; i++, j++) {
         array[i] = DummyArray[j];
+
+        if(terminateSort){
+            changeButtonStatus(0);
+            return;
+        }
         await sleep(speed);
         displaySortedBar();
     }
@@ -232,12 +352,24 @@ async function MergeSort(array, low, high) {
     }
     let mid;
     if(low < high){
-        mid = Math.floor((low + high) / 2);
-        await MergeSort(array, low, mid);
-        await MergeSort(array, mid + 1, high);
-        await merge(array, low, mid, high)
-        await sleep(speed);
-        displaySortedBar();
+        try {
+            mid = Math.floor((low + high) / 2);
+            await MergeSort(array, low, mid);
+            await MergeSort(array, mid + 1, high);
+            await merge(array, low, mid, high);
+
+            if(terminateSort){
+                changeButtonStatus(0);
+                return;
+            }
+            await sleep(speed);
+            displaySortedBar();
+        }
+        catch (error) {
+            console.log("Merge Sort terminated");
+            changeButtonStatus(0);
+            return;
+        }
     }
     if(low === 0 && high === array.length - 1){
         changeButtonStatus(0);
@@ -248,17 +380,29 @@ async function ShellSort(array){
     changeButtonStatus(1);
     let arrayLength = array.length,
         temp;
-    for(let gap = Math.floor(arrayLength / 2); gap >= 1; gap = Math.floor(gap/2)){
-        for(let i = gap; i < arrayLength ; i++ ){
-            temp = array[i];
-            let j;
-            for(j = i; j - gap >= 0 && array[j - gap][0] > temp[0]; j = j - gap  ) {
-                array[j] = array[ j - gap];
+    try {
+        for (let gap = Math.floor(arrayLength / 2); gap >= 1; gap = Math.floor(gap / 2)) {
+            for (let i = gap; i < arrayLength; i++) {
+                temp = array[i];
+                let j;
+                for (j = i; j - gap >= 0 && array[j - gap][0] > temp[0]; j = j - gap) {
+                    array[j] = array[j - gap];
+                }
+                array[j] = temp;
+
+                if(terminateSort){
+                    changeButtonStatus(0);
+                    return;
+                }
+                await sleep(speed);
+                displaySortedBar();
             }
-            array[j] = temp;
-            await sleep(speed);
-            displaySortedBar();
         }
+    }
+    catch (error) {
+        console.log("Shell Sort terminated");
+        changeButtonStatus(0);
+        return;
     }
     changeButtonStatus(0);
 }
@@ -297,19 +441,23 @@ async function CountingSort(array) {
     displaySortedBar();
 }
 
-let buttons = document.getElementsByTagName('button');
+let buttons = document.getElementsByClassName('sortButton');
 
 const changeButtonStatus = (status) => {
     if(status === 1){
         for (let button of buttons){
             button.disabled = true;
             speedSlider.disabled = true;
+            rangeSlider.disabled = true;
+            haltButton.disabled = false;
         }
     }
     else{
         for(let button of buttons){
             button.disabled = false;
             speedSlider.disabled = false;
+            rangeSlider.disabled = false;
+            haltButton.disabled = true;
         }
     }
 
