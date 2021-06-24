@@ -105,6 +105,7 @@ const resetSort = async () => {
     await sleep(100);
     setSpeed();
     terminateSort = false;
+    changeButtonStatus(0);
 }
 
 async function BubbleSort(array) {
